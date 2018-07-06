@@ -46,6 +46,10 @@
 10. Make Django database migrations: 
 `python manage.py migrate`
 
+##### Use Unit Test:
+1. Run the following command:  
+`python manage.py test order`
+
 ##### Use admin interface:
 1. Create an admin user:  
 `python manage.py createsuperuser`
