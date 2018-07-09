@@ -120,6 +120,7 @@ Description: `Delete existing order in the database`
 ##### Customer Orders
 Method: `Post`  
 Endpoint: `customer/find/` 
+Payload: 
 `{  
 	"customer_name":"customer name",
 	"customer_address":"customer address"   
