@@ -44,18 +44,58 @@ class OrderAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        customer_name = request.data.get('customer_name', None)
+        if not customer_name:
+            return Response({"customer_name": ["please enter the customer name"]},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        customer_address = request.data.get('customer_address', None)
+        if not customer_address:
+            return Response({"customer_address": ["please enter the customer address"]},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        customer = Customer.objects.filter(customer_name=customer_name, customer_address=customer_address).first()
+
+        if not customer:
+            customer_serializer = CustomerSerializer(data={"customer_name": customer_name,
+                                                           "customer_address": customer_address})
+            customer_serializer.is_valid(raise_exception=True)
+            customer_serializer.save()
+
+            customer = Customer.objects.filter(customer_name=customer_name, customer_address=customer_address).first()
+
         serializer = OrderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(customer=customer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def put(self, request, order=None):
         if not order:
             raise NotAcceptable("please enter the order id you want to update in url like /order/order-id/")
         order = get_object_or_404(Order, pk=order)
+
+        customer_name = request.data.get('customer_name', None)
+        if not customer_name:
+            return Response({"customer_name": ["please enter the customer name"]},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        customer_address = request.data.get('customer_address', None)
+        if not customer_address:
+            return Response({"customer_address": ["please enter the customer address"]},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        customer = Customer.objects.filter(customer_name=customer_name, customer_address=customer_address).first()
+        if not customer:
+            customer_serializer = CustomerSerializer(data={"customer_name": customer_name,
+                                                           "customer_address": customer_address})
+            customer_serializer.is_valid(raise_exception=True)
+            customer_serializer.save()
+
+            customer = Customer.objects.filter(customer_name=customer_name, customer_address=customer_address).first()
+
         serializer = OrderSerializer(order, data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(customer=customer)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, order=None):
