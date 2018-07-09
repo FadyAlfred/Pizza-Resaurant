@@ -5,15 +5,36 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import NotAcceptable
 
-from .models import Order, Pizza
-from .serializers import OrderSerializer, PizzaSerializer
+from .models import Order, Pizza, Customer
+from .serializers import OrderSerializer, PizzaSerializer, CustomerSerializer
 
 
 class CustomerOrderAPIView(APIView):
-    def get(self, request, customer):
-        orders = Order.objects.filter(customer_name=customer)
+    def get(self, request, pk):
+        orders = Order.objects.filter(customer=pk)
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CustomerFinderAPIView(APIView):
+    def post(self, request):
+        customer_name = request.data.get('customer_name', None)
+        if not customer_name:
+            return Response({"customer_name": ["please enter the customer name"]},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        customer_address = request.data.get('customer_address', None)
+        if not customer_address:
+            return Response({"customer_address": ["please enter the customer address"]},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        customer = Customer.objects.filter(customer_name=customer_name, customer_address=customer_address).first()
+        if customer:
+            customer_serializer = CustomerSerializer(customer)
+            return Response(customer_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"customer": ["No customer found match the entered information."]},
+                            status=status.HTTP_204_NO_CONTENT)
 
 
 class OrderAPIView(APIView):

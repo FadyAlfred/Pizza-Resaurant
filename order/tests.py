@@ -103,11 +103,23 @@ class OrderTest(APITestCase):
         response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    def find_customer(self):
+        """
+        find customer info.
+        """
+        url = reverse('customer_find')
+        data = {
+            "customer_name": "Fady",
+            "customer_address": "5 Zakria Gnehom St. Alexandria, Egypt"
+            }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def list_customer_orders(self):
         """
-        list pizza.
+        list customer orders.
         """
-        url = reverse('customer', args=['Fady Alfred'])
+        url = reverse('customer', args=[1])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -118,6 +130,7 @@ class OrderTest(APITestCase):
         self.create_order()
         self.list_orders()
         self.update_order()
+        self.find_customer()
         self.list_customer_orders()
         self.delete_order()
         self.delete_pizza()
