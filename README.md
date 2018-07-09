@@ -119,6 +119,6 @@ Description: `Delete existing order in the database`
 
 ##### Customer Orders
 Method: `GET`  
-Endpoint: `customer/"customer-name"/orders/` 
+Endpoint: `customer/"customer-name"/` 
 Description: `List all customer orders from the database`
 
