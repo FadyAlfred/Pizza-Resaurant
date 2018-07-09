@@ -118,7 +118,15 @@ Endpoint: `/order/"order-id"/`
 Description: `Delete existing order in the database`
 
 ##### Customer Orders
+Method: `Post`  
+Endpoint: `customer/find/` 
+`{  
+	"customer_name":"customer name",
+	"customer_address":"customer address"   
+}`
+Description: `Get customer ID from his name and address`
+
 Method: `GET`  
-Endpoint: `customer/"customer-name"/` 
+Endpoint: `customer/"customer-id"/` 
 Description: `List all customer orders from the database`
 
